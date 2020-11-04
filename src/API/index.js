@@ -1,4 +1,8 @@
 import axios from 'axios';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode'
+const lookup = require('country-code-lookup');
+
+
 const url = 'https://covid19.mathdro.id/api';
 
 export const fetchData = async (country) => {
@@ -41,9 +45,16 @@ export const fetchDailyData = async () => {
 export const fetchCountries = async () => {
     try{
         const {data : { countries }} = await axios.get(`${url}/countries`);
+        console.log(countries);
         return countries.map((country) => country.name);
     }
     catch (error) {
         console.log(error);
     }
+}
+
+export const getFlag = async (country) => {
+    const countryName = lookup.byCountry(country);
+    const flag = await getUnicodeFlagIcon(countryName.country);
+    return flag;
 }

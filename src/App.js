@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import { Cards, Chart, CountryPicker } from './components';
-import { fetchData } from './API'
+import { fetchData } from './API';
 import coronaImage from './images/coronavirus.png';
 import styles from './App.module.css';
+import getUnicodeFlagIcon from 'country-flag-icons/unicode'
+const lookup = require('country-code-lookup');
+
+
+
 class App extends Component {
 
   state = {
@@ -16,10 +21,14 @@ class App extends Component {
 
   handleCountryChange = async (country) => {
     const fetchedData = await fetchData(country);
-    this.setState({ data: fetchedData, country : country });
+    const countryName = lookup.byCountry(country);
+    const flag = await getUnicodeFlagIcon(countryName.country);
+    this.setState({ data: fetchedData, country : country, flag: flag});
     console.log(country);
+    console.log(this.state);
   }
-
+  
+  
   render() {
     const { data, country } = this.state;
     
@@ -27,7 +36,8 @@ class App extends Component {
       <div className={styles.container}> 
       <img className={styles.image} alt="COVID-19" src={coronaImage}/>
       <Cards data = {data} />
-      <CountryPicker handleCountryChange={this.handleCountryChange}/>
+      <CountryPicker getFlag={this.getFlag} handleCountryChange={this.handleCountryChange}/>
+      <div>{this.state.flag}</div>
       <Chart data={data} country={country}/>
       </div>
     );
